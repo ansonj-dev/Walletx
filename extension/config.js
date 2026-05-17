@@ -1,6 +1,6 @@
 // WalletX Configuration
 const CONFIG = {
-  API_BASE_URL: 'http://localhost:3000/api',
+  API_BASE_URL: 'https://walletx-two.vercel.app/api',
   
   SUPPORTED_IDES: {
     cursor: { 
