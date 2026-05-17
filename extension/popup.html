@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WalletX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="wx-popup">
+
+    <div class="wx-header">
+      <div class="wx-logo">
+        <div class="wx-logo-icon">
+          <svg viewBox="0 0 16 16" fill="none">
+            <path d="M8 2L14 5.5V10.5L8 14L2 10.5V5.5L8 2Z" fill="#000D14" stroke="#000D14" stroke-width="0.5"/>
+            <circle cx="8" cy="8" r="1.5" fill="#000D14"/>
+          </svg>
+        </div>
+        <span class="wx-logo-name">Wallet<span>X</span></span>
+      </div>
+      <div class="wx-status">
+        <div class="wx-dot"></div>
+        Loading...
+      </div>
+    </div>
+
+    <div class="wx-balance-card">
+      <div class="wx-balance-label">Available Credits</div>
+      <div class="wx-balance-amount" id="balance-display"><span>$</span><span id="balance-val">0.00</span></div>
+      <div class="wx-balance-sub">
+        <div class="wx-bonus-badge">⚡ 2x active · 18h left</div>
+        <div class="wx-model-pill" id="model-pill-header">◈ Granite</div>
+      </div>
+    </div>
+
+    <div class="wx-address-row">
+      <div>
+        <div class="wx-address-label">Secret Address</div>
+        <div class="wx-address-code" id="secret-addr">Loading...</div>
+      </div>
+      <button class="wx-copy-btn" id="copy-addr-btn" onclick="copyAddr()">copy</button>
+    </div>
+
+    <div class="wx-tabs">
+      <button class="wx-tab active" onclick="switchTab('wallet', this)">
+        <i class="ti ti-credit-card"></i> Wallet
+      </button>
+      <button class="wx-tab" onclick="switchTab('models', this)">
+        <i class="ti ti-cpu"></i> Models
+      </button>
+      <button class="wx-tab" onclick="switchTab('context', this)">
+        <i class="ti ti-brain"></i> Context
+      </button>
+    </div>
+
+    <!-- WALLET TAB -->
+    <div class="wx-panel active" id="panel-wallet">
+      <div class="wx-section-label">Quick Recharge</div>
+      <div class="wx-amount-row">
+        <button class="wx-amount-btn" onclick="selectAmt(this, 1)">$1</button>
+        <button class="wx-amount-btn" onclick="selectAmt(this, 5)">$5</button>
+        <button class="wx-amount-btn selected" onclick="selectAmt(this, 10)">$10</button>
+        <button class="wx-amount-btn" onclick="selectAmt(this, 25)">$25</button>
+      </div>
+      <input class="wx-custom-input" type="number" placeholder="Custom amount ($)" id="custom-amt" oninput="clearQuick()">
+
+      <div class="wx-section-label">Payment Method</div>
+      <div class="wx-pay-methods">
+        <button class="wx-pay-btn selected" onclick="selectPay(this, 'upi')">
+          <span class="pay-icon">⬡</span> UPI
+        </button>
+        <button class="wx-pay-btn" onclick="selectPay(this, 'card')">
+          <span class="pay-icon">▣</span> Card
+        </button>
+        <button class="wx-pay-btn" onclick="selectPay(this, 'crypto')">
+          <span class="pay-icon">◈</span> Crypto
+        </button>
+      </div>
+
+      <button class="wx-recharge-btn" id="recharge-btn" onclick="doRecharge()">
+        Recharge $10 via UPI
+      </button>
+    </div>
+
+    <!-- MODELS TAB -->
+    <div class="wx-panel" id="panel-models">
+      <div class="wx-section-label">Select Model</div>
+      <div class="wx-model-select">
+        <div class="wx-model-card selected" onclick="selectModel(this, 'Granite 3.3', '0.8', 'granite-3.3-8b')">
+          <div class="wx-model-name">IBM Granite</div>
+          <div class="wx-model-cost">0.8¢ / 1k tokens</div>
+        </div>
+        <div class="wx-model-card" onclick="selectModel(this, 'GPT-4o', '1.5', 'gpt-4o')">
+          <div class="wx-model-name">GPT-4o</div>
+          <div class="wx-model-cost">1.5¢ / 1k tokens</div>
+        </div>
+        <div class="wx-model-card" onclick="selectModel(this, 'Claude Sonnet', '1.2', 'claude-3-sonnet')">
+          <div class="wx-model-name">Claude Sonnet</div>
+          <div class="wx-model-cost">1.2¢ / 1k tokens</div>
+        </div>
+        <div class="wx-model-card" onclick="selectModel(this, 'Llama 3.3', '0.4', 'llama-3.3-70b')">
+          <div class="wx-model-name">Llama 3.3</div>
+          <div class="wx-model-cost">0.4¢ / 1k tokens</div>
+        </div>
+      </div>
+      <hr class="wx-divider">
+      <div class="wx-section-label">Est. remaining queries</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:18px; color:#FFB020; font-weight:700; margin-bottom:4px;" id="queries-est">~0</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:#3A5070;">at selected model rate · 2x bonus active</div>
+    </div>
+
+    <!-- CONTEXT TAB -->
+    <div class="wx-panel" id="panel-context">
+      <div class="wx-section-label">Saved Snapshots</div>
+      <div id="snapshots-list">
+        <div style="text-align:center; padding:20px; color:#3A5070; font-size:11px;">Loading...</div>
+      </div>
+
+      <button class="wx-save-btn" id="save-btn" onclick="saveSnap()">
+        <i class="ti ti-device-floppy"></i> Save current context
+      </button>
+
+      <div class="wx-section-label">Import via Secret Address</div>
+      <div class="wx-import-row">
+        <input class="wx-import-input" placeholder="WX-XXXX·XXXX·XXXX·XXXX" id="import-code">
+        <button class="wx-import-btn" onclick="doImport()">Import</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="toast"></div>
+
+  <script src="config.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

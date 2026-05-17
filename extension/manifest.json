@@ -1,0 +1,67 @@
+{
+  "manifest_version": 3,
+  "name": "WalletX - Universal AI Credit Wallet",
+  "version": "1.0.0",
+  "description": "Universal credit wallet for AI models across IDEs. Pay once, use everywhere.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "WalletX"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://cursor.sh/*",
+        "*://*.cursor.sh/*",
+        "*://*.windsurf.com/*",
+        "*://windsurf.com/*",
+        "*://copilot.github.com/*",
+        "*://*.copilot.github.com/*",
+        "*://*.antigravity.com/*",
+        "*://antigravity.com/*"
+      ],
+      "js": ["config.js", "content.js"],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ],
+  "permissions": [
+    "storage",
+    "tabs",
+    "activeTab",
+    "webRequest",
+    "scripting"
+  ],
+  "host_permissions": [
+    "*://cursor.sh/*",
+    "*://*.cursor.sh/*",
+    "*://*.windsurf.com/*",
+    "*://windsurf.com/*",
+    "*://copilot.github.com/*",
+    "*://*.copilot.github.com/*",
+    "*://*.antigravity.com/*",
+    "*://antigravity.com/*",
+    "*://localhost:3000/*",
+    "*://api.openai.com/*",
+    "*://api.anthropic.com/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["config.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

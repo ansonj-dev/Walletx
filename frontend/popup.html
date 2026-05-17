@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WalletX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 360px;
+      background: #080C18;
+      font-family: 'Syne', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .wx-popup {
+      width: 360px;
+      background: #080C18;
+      border-radius: 0;
+      overflow: hidden;
+    }
+
+    .wx-header {
+      padding: 16px 18px 12px;
+      background: #0A0F1E;
+      border-bottom: 1px solid #111827;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .wx-logo { display: flex; align-items: center; gap: 8px; }
+    .wx-logo-icon {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: #00C8F0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .wx-logo-icon svg { width: 16px; height: 16px; }
+    .wx-logo-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 15px; font-weight: 800;
+      color: #E8F0FF; letter-spacing: 0.5px;
+    }
+    .wx-logo-name span { color: #00C8F0; }
+    .wx-status {
+      display: flex; align-items: center; gap: 5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; color: #2DD88A;
+    }
+    .wx-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #2DD88A;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .wx-balance-card {
+      margin: 14px 14px 0;
+      background: #0E1628;
+      border: 1px solid #1A2845;
+      border-radius: 12px;
+      padding: 14px 16px;
+      position: relative; overflow: hidden;
+    }
+    .wx-balance-card::before {
+      content: '';
+      position: absolute; top: -30px; right: -20px;
+      width: 100px; height: 100px; border-radius: 50%;
+      background: #00C8F015; pointer-events: none;
+    }
+    .wx-balance-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; color: #4A6080; letter-spacing: 1px;
+      text-transform: uppercase; margin-bottom: 4px;
+    }
+    .wx-balance-amount {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 30px; font-weight: 700;
+      color: #FFB020; letter-spacing: -1px; line-height: 1;
+    }
+    .wx-balance-amount span { font-size: 14px; color: #7A6030; margin-right: 2px; }
+    .wx-balance-sub { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+    .wx-bonus-badge {
+      background: #1A3020; border: 1px solid #2DD88A40;
+      color: #2DD88A; font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; padding: 3px 8px; border-radius: 20px;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .wx-model-pill {
+      background: #00C8F015; border: 1px solid #00C8F030;
+      color: #00C8F0; font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; padding: 3px 8px; border-radius: 20px;
+      cursor: pointer; display: flex; align-items: center; gap: 4px;
+    }
+
+    .wx-address-row {
+      margin: 10px 14px 0;
+      background: #080C18;
+      border: 1px solid #1A2540;
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .wx-address-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; color: #3A5070; letter-spacing: 0.5px;
+      text-transform: uppercase; margin-bottom: 2px;
+    }
+    .wx-address-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; color: #6080A0;
+    }
+    .wx-copy-btn {
+      background: none; border: 1px solid #1A2845;
+      color: #4A6080; font-size: 11px; padding: 4px 8px;
+      border-radius: 6px; cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      transition: all 0.15s;
+    }
+    .wx-copy-btn:hover { border-color: #00C8F050; color: #00C8F0; }
+    .wx-copy-btn.copied { border-color: #2DD88A50; color: #2DD88A; }
+
+    .wx-tabs {
+      display: flex; margin: 12px 14px 0;
+      background: #0A0F1E; border-radius: 8px; padding: 3px;
+      border: 1px solid #111827;
+    }
+    .wx-tab {
+      flex: 1; padding: 7px; border-radius: 6px;
+      font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 600;
+      color: #3A5070; cursor: pointer; text-align: center;
+      transition: all 0.2s; border: none; background: none;
+      display: flex; align-items: center; justify-content: center; gap: 5px;
+    }
+    .wx-tab.active {
+      background: #0E1A30; color: #00C8F0;
+      border: 1px solid #1A3050;
+    }
+
+    .wx-panel { padding: 12px 14px 14px; display: none; }
+    .wx-panel.active { display: block; }
+
+    .wx-section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; color: #3A5070; letter-spacing: 1px;
+      text-transform: uppercase; margin-bottom: 8px;
+    }
+
+    .wx-amount-row { display: flex; gap: 6px; margin-bottom: 10px; }
+    .wx-amount-btn {
+      flex: 1; padding: 8px 4px;
+      background: #0A0F1E; border: 1px solid #1A2845;
+      color: #6080A0; font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; border-radius: 7px; cursor: pointer; transition: all 0.15s;
+    }
+    .wx-amount-btn:hover { border-color: #FFB02050; color: #FFB020; background: #100A00; }
+    .wx-amount-btn.selected { border-color: #FFB020; color: #FFB020; background: #100A00; }
+
+    .wx-custom-input {
+      width: 100%;
+      background: #0A0F1E; border: 1px solid #1A2845;
+      color: #E8F0FF; font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; padding: 9px 12px; border-radius: 8px;
+      margin-bottom: 10px; outline: none;
+    }
+    .wx-custom-input:focus { border-color: #00C8F050; }
+    .wx-custom-input::placeholder { color: #2A3850; }
+
+    .wx-pay-methods {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px;
+    }
+    .wx-pay-btn {
+      padding: 9px 4px; background: #0A0F1E;
+      border: 1px solid #1A2845; border-radius: 8px;
+      color: #5070A0; font-size: 11px; font-family: 'Syne', sans-serif;
+      font-weight: 600; cursor: pointer; text-align: center;
+      transition: all 0.15s; display: flex; flex-direction: column;
+      align-items: center; gap: 3px;
+    }
+    .wx-pay-btn .pay-icon { font-size: 16px; }
+    .wx-pay-btn:hover { border-color: #00C8F040; color: #00C8F0; }
+    .wx-pay-btn.selected { border-color: #00C8F0; color: #00C8F0; background: #001A20; }
+
+    .wx-recharge-btn {
+      width: 100%; padding: 11px;
+      background: #00C8F0; border: none;
+      color: #000D14; font-family: 'Syne', sans-serif;
+      font-size: 13px; font-weight: 800;
+      border-radius: 9px; cursor: pointer;
+      transition: all 0.15s; letter-spacing: 0.3px;
+    }
+    .wx-recharge-btn:hover { background: #00E0FF; }
+    .wx-recharge-btn:active { transform: scale(0.98); }
+    .wx-recharge-btn.success { background: #2DD88A; color: #001A0E; }
+
+    .wx-model-select {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px;
+    }
+    .wx-model-card {
+      padding: 8px 10px; background: #0A0F1E;
+      border: 1px solid #1A2845; border-radius: 8px;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .wx-model-card.selected { border-color: #00C8F060; background: #001220; }
+    .wx-model-name {
+      font-family: 'Syne', sans-serif; font-size: 11px;
+      font-weight: 600; color: #8090A0; margin-bottom: 2px;
+    }
+    .wx-model-cost {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; color: #3A5070;
+    }
+    .wx-model-card.selected .wx-model-name { color: #00C8F0; }
+    .wx-model-card.selected .wx-model-cost { color: #005070; }
+
+    .wx-snapshot-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 10px; background: #0A0F1E;
+      border: 1px solid #1A2845; border-radius: 8px;
+      margin-bottom: 6px; cursor: pointer; transition: all 0.15s;
+    }
+    .wx-snapshot-item:hover { border-color: #1A3050; }
+    .wx-snapshot-left { display: flex; align-items: center; gap: 8px; }
+    .wx-snapshot-icon {
+      width: 28px; height: 28px; border-radius: 6px;
+      background: #0E1A30; border: 1px solid #1A3050;
+      display: flex; align-items: center; justify-content: center; font-size: 13px;
+    }
+    .wx-snapshot-name {
+      font-family: 'Syne', sans-serif; font-size: 11px;
+      font-weight: 600; color: #8090B0; margin-bottom: 2px;
+    }
+    .wx-snapshot-meta {
+      font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #3A5070;
+    }
+    .wx-snapshot-load {
+      font-family: 'JetBrains Mono', monospace; font-size: 9px;
+      color: #3A5070; background: none;
+      border: 1px solid #1A2845; padding: 4px 8px;
+      border-radius: 5px; cursor: pointer; transition: all 0.15s;
+    }
+    .wx-snapshot-load:hover { border-color: #00C8F050; color: #00C8F0; }
+
+    .wx-save-btn {
+      width: 100%; padding: 10px;
+      background: #0A0F1E; border: 1px solid #1A3050;
+      color: #00C8F0; font-family: 'Syne', sans-serif;
+      font-size: 12px; font-weight: 700;
+      border-radius: 9px; cursor: pointer;
+      transition: all 0.15s; margin-bottom: 8px;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .wx-save-btn:hover { background: #001A20; border-color: #00C8F0; }
+
+    .wx-import-row { display: flex; gap: 6px; }
+    .wx-import-input {
+      flex: 1;
+      background: #0A0F1E; border: 1px solid #1A2845;
+      color: #6080A0; font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; padding: 8px 10px; border-radius: 7px; outline: none;
+    }
+    .wx-import-input:focus { border-color: #00C8F050; }
+    .wx-import-input::placeholder { color: #1A2840; }
+    .wx-import-btn {
+      padding: 8px 12px; background: #0E1628;
+      border: 1px solid #1A3050; color: #00C8F0;
+      font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+      border-radius: 7px; cursor: pointer; white-space: nowrap; transition: all 0.15s;
+    }
+    .wx-import-btn:hover { background: #001A20; border-color: #00C8F0; }
+
+    .wx-divider { border: none; border-top: 1px solid #111827; margin: 10px 0; }
+
+    #toast {
+      position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
+      background: #2DD88A; color: #001A0E;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700;
+      padding: 6px 14px; border-radius: 20px;
+      opacity: 0; transition: opacity 0.3s; pointer-events: none;
+      white-space: nowrap; z-index: 100;
+    }
+    #toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="wx-popup">
+
+    <div class="wx-header">
+      <div class="wx-logo">
+        <div class="wx-logo-icon">
+          <svg viewBox="0 0 16 16" fill="none">
+            <path d="M8 2L14 5.5V10.5L8 14L2 10.5V5.5L8 2Z" fill="#000D14" stroke="#000D14" stroke-width="0.5"/>
+            <circle cx="8" cy="8" r="1.5" fill="#000D14"/>
+          </svg>
+        </div>
+        <span class="wx-logo-name">Wallet<span>X</span></span>
+      </div>
+      <div class="wx-status">
+        <div class="wx-dot"></div>
+        IBM BOB
+      </div>
+    </div>
+
+    <div class="wx-balance-card">
+      <div class="wx-balance-label">Available Credits</div>
+      <div class="wx-balance-amount" id="balance-display"><span>$</span><span id="balance-val">42.50</span></div>
+      <div class="wx-balance-sub">
+        <div class="wx-bonus-badge">⚡ 2x active · 18h left</div>
+        <div class="wx-model-pill" id="model-pill-header">◈ Granite</div>
+      </div>
+    </div>
+
+    <div class="wx-address-row">
+      <div>
+        <div class="wx-address-label">Secret Address</div>
+        <div class="wx-address-code" id="secret-addr">WX-8F2A·C4D1·9E3B·7A0F</div>
+      </div>
+      <button class="wx-copy-btn" id="copy-addr-btn" onclick="copyAddr()">copy</button>
+    </div>
+
+    <div class="wx-tabs">
+      <button class="wx-tab active" onclick="switchTab('wallet', this)">
+        <i class="ti ti-credit-card"></i> Wallet
+      </button>
+      <button class="wx-tab" onclick="switchTab('models', this)">
+        <i class="ti ti-cpu"></i> Models
+      </button>
+      <button class="wx-tab" onclick="switchTab('context', this)">
+        <i class="ti ti-brain"></i> Context
+      </button>
+    </div>
+
+    <!-- WALLET TAB -->
+    <div class="wx-panel active" id="panel-wallet">
+      <div class="wx-section-label">Quick Recharge</div>
+      <div class="wx-amount-row">
+        <button class="wx-amount-btn" onclick="selectAmt(this, 1)">$1</button>
+        <button class="wx-amount-btn" onclick="selectAmt(this, 5)">$5</button>
+        <button class="wx-amount-btn selected" onclick="selectAmt(this, 10)">$10</button>
+        <button class="wx-amount-btn" onclick="selectAmt(this, 25)">$25</button>
+      </div>
+      <input class="wx-custom-input" type="number" placeholder="Custom amount ($)" id="custom-amt" oninput="clearQuick()">
+
+      <div class="wx-section-label">Payment Method</div>
+      <div class="wx-pay-methods">
+        <button class="wx-pay-btn selected" onclick="selectPay(this, 'upi')">
+          <span class="pay-icon">⬡</span> UPI
+        </button>
+        <button class="wx-pay-btn" onclick="selectPay(this, 'card')">
+          <span class="pay-icon">▣</span> Card
+        </button>
+        <button class="wx-pay-btn" onclick="selectPay(this, 'crypto')">
+          <span class="pay-icon">◈</span> Crypto
+        </button>
+      </div>
+
+      <button class="wx-recharge-btn" id="recharge-btn" onclick="doRecharge()">
+        Recharge $10 via UPI
+      </button>
+    </div>
+
+    <!-- MODELS TAB -->
+    <div class="wx-panel" id="panel-models">
+      <div class="wx-section-label">Select Model</div>
+      <div class="wx-model-select">
+        <div class="wx-model-card selected" onclick="selectModel(this, 'Granite 3.3', '0.8')">
+          <div class="wx-model-name">IBM Granite</div>
+          <div class="wx-model-cost">0.8¢ / 1k tokens</div>
+        </div>
+        <div class="wx-model-card" onclick="selectModel(this, 'GPT-4o', '1.5')">
+          <div class="wx-model-name">GPT-4o</div>
+          <div class="wx-model-cost">1.5¢ / 1k tokens</div>
+        </div>
+        <div class="wx-model-card" onclick="selectModel(this, 'Claude Sonnet', '1.2')">
+          <div class="wx-model-name">Claude Sonnet</div>
+          <div class="wx-model-cost">1.2¢ / 1k tokens</div>
+        </div>
+        <div class="wx-model-card" onclick="selectModel(this, 'Llama 3.3', '0.4')">
+          <div class="wx-model-name">Llama 3.3</div>
+          <div class="wx-model-cost">0.4¢ / 1k tokens</div>
+        </div>
+      </div>
+      <hr class="wx-divider">
+      <div class="wx-section-label">Est. remaining queries</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:18px; color:#FFB020; font-weight:700; margin-bottom:4px;" id="queries-est">~5,312</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:#3A5070;">at selected model rate · 2x bonus active</div>
+    </div>
+
+    <!-- CONTEXT TAB -->
+    <div class="wx-panel" id="panel-context">
+      <div class="wx-section-label">Saved Snapshots</div>
+      <div>
+        <div class="wx-snapshot-item">
+          <div class="wx-snapshot-left">
+            <div class="wx-snapshot-icon">⬡</div>
+            <div>
+              <div class="wx-snapshot-name">WalletX Backend</div>
+              <div class="wx-snapshot-meta">IBM Bob · 47 files · 2h ago</div>
+            </div>
+          </div>
+          <button class="wx-snapshot-load" onclick="loadSnap('WalletX Backend')">load</button>
+        </div>
+        <div class="wx-snapshot-item">
+          <div class="wx-snapshot-left">
+            <div class="wx-snapshot-icon">◈</div>
+            <div>
+              <div class="wx-snapshot-name">QUASAR Dashboard</div>
+              <div class="wx-snapshot-meta">Cursor · 31 files · yesterday</div>
+            </div>
+          </div>
+          <button class="wx-snapshot-load" onclick="loadSnap('QUASAR Dashboard')">load</button>
+        </div>
+      </div>
+
+      <button class="wx-save-btn" id="save-btn" onclick="saveSnap()">
+        <i class="ti ti-device-floppy"></i> Save current context
+      </button>
+
+      <div class="wx-section-label">Import via Secret Address</div>
+      <div class="wx-import-row">
+        <input class="wx-import-input" placeholder="WX-XXXX·XXXX·XXXX·XXXX" id="import-code">
+        <button class="wx-import-btn" onclick="doImport()">Import</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    let selectedAmt = 10;
+    let selectedPay = 'upi';
+    let balance = 42.50;
+    let modelRate = 0.8;
+
+    function switchTab(id, btn) {
+      document.querySelectorAll('.wx-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.wx-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + id).classList.add('active');
+    }
+
+    function selectAmt(btn, amt) {
+      document.querySelectorAll('.wx-amount-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedAmt = amt;
+      document.getElementById('custom-amt').value = '';
+      updateRechargeBtn();
+    }
+
+    function clearQuick() {
+      document.querySelectorAll('.wx-amount-btn').forEach(b => b.classList.remove('selected'));
+      const v = parseFloat(document.getElementById('custom-amt').value);
+      if (!isNaN(v)) { selectedAmt = v; updateRechargeBtn(); }
+    }
+
+    function selectPay(btn, method) {
+      document.querySelectorAll('.wx-pay-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedPay = method;
+      updateRechargeBtn();
+    }
+
+    function updateRechargeBtn() {
+      const labels = { upi: 'UPI', card: 'Card', crypto: 'Crypto' };
+      document.getElementById('recharge-btn').textContent = 'Recharge $' + selectedAmt + ' via ' + labels[selectedPay];
+      document.getElementById('recharge-btn').classList.remove('success');
+    }
+
+    function doRecharge() {
+      const btn = document.getElementById('recharge-btn');
+      btn.textContent = 'Processing...';
+      btn.style.opacity = '0.7';
+      setTimeout(() => {
+        balance += selectedAmt;
+        document.getElementById('balance-val').textContent = balance.toFixed(2);
+        btn.classList.add('success');
+        btn.style.opacity = '1';
+        btn.textContent = '✓ $' + selectedAmt + ' added!';
+        updateQueriesEst();
+        showToast('+$' + selectedAmt + ' credited · 2x bonus applied');
+        setTimeout(() => updateRechargeBtn(), 2500);
+      }, 1200);
+    }
+
+    function selectModel(card, name, rate) {
+      document.querySelectorAll('.wx-model-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      modelRate = parseFloat(rate);
+      document.getElementById('model-pill-header').textContent = '◈ ' + name.split(' ')[0];
+      updateQueriesEst();
+    }
+
+    function updateQueriesEst() {
+      const queries = Math.round((balance / (modelRate / 100)) / 1000);
+      document.getElementById('queries-est').textContent = '~' + queries.toLocaleString();
+    }
+
+    function copyAddr() {
+      const addr = document.getElementById('secret-addr').textContent;
+      navigator.clipboard.writeText(addr).catch(() => {});
+      const btn = document.getElementById('copy-addr-btn');
+      btn.textContent = 'copied!';
+      btn.classList.add('copied');
+      showToast('Secret address copied');
+      setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
+    }
+
+    function saveSnap() {
+      const btn = document.getElementById('save-btn');
+      btn.innerHTML = '<i class="ti ti-loader"></i> Saving...';
+      setTimeout(() => {
+        btn.innerHTML = '<i class="ti ti-check"></i> Snapshot saved!';
+        showToast('Context saved · importable via secret address');
+        setTimeout(() => {
+          btn.innerHTML = '<i class="ti ti-device-floppy"></i> Save current context';
+        }, 2200);
+      }, 1000);
+    }
+
+    function loadSnap(name) {
+      showToast('Loading "' + name + '" context...');
+    }
+
+    function doImport() {
+      const code = document.getElementById('import-code').value.trim();
+      if (!code) { showToast('Enter a secret address first'); return; }
+      showToast('Importing context from ' + code.slice(0, 10) + '...');
+      setTimeout(() => { document.getElementById('import-code').value = ''; }, 1000);
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    updateQueriesEst();
+  </script>
+</body>
+</html>

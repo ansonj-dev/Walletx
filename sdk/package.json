@@ -1,0 +1,55 @@
+{
+  "name": "@walletx/sdk",
+  "version": "1.0.0",
+  "description": "Universal AI credit wallet SDK for IDE integrations",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "keywords": [
+    "ai",
+    "credits",
+    "ide",
+    "wallet",
+    "universal",
+    "cursor",
+    "copilot",
+    "windsurf",
+    "antigravity",
+    "openai",
+    "anthropic",
+    "gemini"
+  ],
+  "author": "WalletX Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/walletx/sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/walletx/sdk/issues"
+  },
+  "homepage": "https://walletx.dev",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/**/*.js",
+    "format": "prettier --write \"src/**/*.js\""
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "eventemitter3": "^5.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "eslint": "^8.50.0",
+    "prettier": "^3.0.0"
+  },
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE"
+  ]
+}

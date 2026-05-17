@@ -1,0 +1,18 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="128" height="128" rx="24" fill="#080C18"/>
+  
+  <!-- Hexagon shape -->
+  <path d="M64 24L104 48V80L64 104L24 80V48L64 24Z" fill="#00C8F0" stroke="#00E0FF" stroke-width="2"/>
+  
+  <!-- Inner circle -->
+  <circle cx="64" cy="64" r="12" fill="#000D14"/>
+  
+  <!-- Accent lines -->
+  <line x1="64" y1="24" x2="64" y2="40" stroke="#000D14" stroke-width="2"/>
+  <line x1="64" y1="88" x2="64" y2="104" stroke="#000D14" stroke-width="2"/>
+  <line x1="24" y1="48" x2="36" y2="54" stroke="#000D14" stroke-width="2"/>
+  <line x1="92" y1="74" x2="104" y2="80" stroke="#000D14" stroke-width="2"/>
+</svg>
+
+<!-- Made with Bob -->
