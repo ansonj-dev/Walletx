@@ -1,10 +1,21 @@
 const mongoose = require('mongoose');
+const mockDB = require('./database-mock');
 
 /**
  * Database connection configuration
- * Connects to MongoDB using Mongoose
+ * Supports both MongoDB and Mock (in-memory) database
  */
 const connectDB = async () => {
+  // Check if mock mode is enabled
+  if (process.env.DATABASE_MODE === 'mock') {
+    console.log('🔧 Running in MOCK DATABASE mode (in-memory storage)');
+    console.log('⚠️  Data will be lost on server restart');
+    console.log('💡 Install MongoDB and set DATABASE_MODE=mongodb for persistence');
+    await mockDB.connect();
+    return mockDB;
+  }
+
+  // Connect to real MongoDB
   try {
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
@@ -31,6 +42,7 @@ const connectDB = async () => {
 
   } catch (error) {
     console.error('❌ Error connecting to MongoDB:', error.message);
+    console.log('💡 Tip: Set DATABASE_MODE=mock in .env to run without MongoDB');
     process.exit(1);
   }
 };
