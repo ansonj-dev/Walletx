@@ -232,26 +232,37 @@ async function handleAuth() {
     return;
   }
   
+  if (authMode === 'register' && password.length < 6) {
+    showToast('Password must be at least 6 characters', 'error');
+    return;
+  }
+  
   submitBtn.disabled = true;
   submitBtn.textContent = authMode === 'login' ? 'Logging in...' : 'Registering...';
   
   try {
-    let data;
+    let response;
     if (authMode === 'register') {
-      data = await api.register(email, password, name || email.split('@')[0]);
+      response = await api.register(email, password, name || email.split('@')[0]);
     } else {
-      data = await api.login(email, password);
+      response = await api.login(email, password);
     }
     
-    state.user = data.user;
-    state.isAuthenticated = true;
-    state.secretAddress = data.user.secretAddress;
+    console.log('Auth response:', response);
     
-    showToast(`Welcome ${data.user.name}!`);
+    // Extract user data from response.data
+    const userData = response.data || response;
+    state.user = userData;
+    state.isAuthenticated = true;
+    state.secretAddress = userData.secretAddress;
+    state.token = userData.token;
+    
+    showToast(`Welcome! Secret Address: ${userData.secretAddress}`);
     
     // Reload the app
     await initializeApp();
   } catch (error) {
+    console.error('Auth error:', error);
     showToast(error.message || 'Authentication failed', 'error');
     submitBtn.disabled = false;
     submitBtn.textContent = authMode === 'login' ? 'Login' : 'Register';

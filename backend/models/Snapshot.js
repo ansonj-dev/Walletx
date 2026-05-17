@@ -20,8 +20,7 @@ const snapshotSchema = new mongoose.Schema({
   snapshotId: {
     type: String,
     required: true,
-    unique: true,
-    index: true
+    unique: true
   },
   secretCode: {
     type: String,

@@ -29,7 +29,7 @@ router.post(
         });
       }
 
-      const { email, password } = req.body;
+      const { email, password, name } = req.body;
 
       // Check if user already exists
       const existingUser = await User.findOne({ email });
@@ -53,14 +53,19 @@ router.post(
       const bonusMultiplier = parseInt(process.env.BONUS_MULTIPLIER_FIRST_RECHARGE) || 2;
 
       // Create new user
-      const user = new User({
+      const user = await User.create({
         email,
-        password,
+        password, // Will be hashed by pre-save hook
+        name: name || email.split('@')[0],
         secretAddress,
-        bonusMultiplier
+        bonusMultiplier,
+        creditBalance: 0,
+        hasReceivedFirstRechargeBonus: false,
+        totalRecharges: 0,
+        totalSpent: 0,
+        isActive: true,
+        lastLogin: new Date()
       });
-
-      await user.save();
 
       // Generate JWT token
       const token = generateToken(user._id);
@@ -71,6 +76,7 @@ router.post(
         data: {
           userId: user._id,
           email: user.email,
+          name: user.name,
           secretAddress: user.secretAddress,
           creditBalance: user.creditBalance,
           bonusMultiplier: user.bonusMultiplier,
@@ -122,8 +128,9 @@ router.post(
       }
 
       // Find user by email or secretAddress
-      const query = email ? { email } : { secretAddress };
-      const user = await User.findOne(query);
+      const user = email
+        ? await User.findOne({ email })
+        : await User.findOne({ secretAddress });
 
       if (!user) {
         return res.status(401).json({
@@ -162,6 +169,7 @@ router.post(
         data: {
           userId: user._id,
           email: user.email,
+          name: user.name,
           secretAddress: user.secretAddress,
           creditBalance: user.creditBalance,
           bonusMultiplier: user.bonusMultiplier,
@@ -197,8 +205,8 @@ router.get('/me', authenticate, async (req, res) => {
 
     res.json({
       success: true,
-      data: {
-        userId: user._id,
+      user: {
+        _id: user._id,
         email: user.email,
         secretAddress: user.secretAddress,
         creditBalance: user.creditBalance,
