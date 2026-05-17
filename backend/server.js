@@ -130,59 +130,61 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
-const PORT = process.env.PORT || 3000;
+// Start server (only in non-serverless environment)
+if (process.env.VERCEL !== '1') {
+  const PORT = process.env.PORT || 3000;
 
-const server = app.listen(PORT, () => {
-  console.log('');
-  console.log('╔════════════════════════════════════════════════════════╗');
-  console.log('║                                                        ║');
-  console.log('║              🚀 WalletX API Server                     ║');
-  console.log('║                                                        ║');
-  console.log('║  Universal AI Credit Wallet                           ║');
-  console.log('║  IBM Bob Hackathon                                    ║');
-  console.log('║                                                        ║');
-  console.log('╚════════════════════════════════════════════════════════╝');
-  console.log('');
-  console.log(`✅ Server running on port ${PORT}`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`📡 API Base URL: http://localhost:${PORT}`);
-  console.log(`🏥 Health Check: http://localhost:${PORT}/health`);
-  console.log('');
-  console.log('Available Endpoints:');
-  console.log('  📝 Auth:      /api/auth');
-  console.log('  💰 Credits:   /api/credits');
-  console.log('  💳 Payments:  /api/payments');
-  console.log('  🤖 AI Proxy:  /api/ai');
-  console.log('  📸 Snapshots: /api/snapshots');
-  console.log('');
-  console.log('Press Ctrl+C to stop the server');
-  console.log('');
-});
-
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('SIGTERM signal received: closing HTTP server');
-  server.close(() => {
-    console.log('HTTP server closed');
-    process.exit(0);
+  const server = app.listen(PORT, () => {
+    console.log('');
+    console.log('╔════════════════════════════════════════════════════════╗');
+    console.log('║                                                        ║');
+    console.log('║              🚀 WalletX API Server                     ║');
+    console.log('║                                                        ║');
+    console.log('║  Universal AI Credit Wallet                           ║');
+    console.log('║  IBM Bob Hackathon                                    ║');
+    console.log('║                                                        ║');
+    console.log('╚════════════════════════════════════════════════════════╝');
+    console.log('');
+    console.log(`✅ Server running on port ${PORT}`);
+    console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`📡 API Base URL: http://localhost:${PORT}`);
+    console.log(`🏥 Health Check: http://localhost:${PORT}/health`);
+    console.log('');
+    console.log('Available Endpoints:');
+    console.log('  📝 Auth:      /api/auth');
+    console.log('  💰 Credits:   /api/credits');
+    console.log('  💳 Payments:  /api/payments');
+    console.log('  🤖 AI Proxy:  /api/ai');
+    console.log('  📸 Snapshots: /api/snapshots');
+    console.log('');
+    console.log('Press Ctrl+C to stop the server');
+    console.log('');
   });
-});
 
-process.on('SIGINT', () => {
-  console.log('\nSIGINT signal received: closing HTTP server');
-  server.close(() => {
-    console.log('HTTP server closed');
-    process.exit(0);
+  // Graceful shutdown
+  process.on('SIGTERM', () => {
+    console.log('SIGTERM signal received: closing HTTP server');
+    server.close(() => {
+      console.log('HTTP server closed');
+      process.exit(0);
+    });
   });
-});
 
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err) => {
-  console.error('Unhandled Promise Rejection:', err);
-  // Close server & exit process
-  server.close(() => process.exit(1));
-});
+  process.on('SIGINT', () => {
+    console.log('\nSIGINT signal received: closing HTTP server');
+    server.close(() => {
+      console.log('HTTP server closed');
+      process.exit(0);
+    });
+  });
+
+  // Handle unhandled promise rejections
+  process.on('unhandledRejection', (err) => {
+    console.error('Unhandled Promise Rejection:', err);
+    // Close server & exit process
+    server.close(() => process.exit(1));
+  });
+}
 
 module.exports = app;
 

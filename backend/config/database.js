@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const mockDB = require('./database-mock');
 
+// Cache the database connection
+let cachedConnection = null;
+
 /**
  * Database connection configuration
  * Supports both MongoDB and Mock (in-memory) database
@@ -15,10 +18,17 @@ const connectDB = async () => {
     return mockDB;
   }
 
+  // Return cached connection if available (for serverless)
+  if (cachedConnection && mongoose.connection.readyState === 1) {
+    console.log('♻️  Using cached MongoDB connection');
+    return cachedConnection;
+  }
+
   // Connect to real MongoDB
   try {
     const conn = await mongoose.connect(process.env.MONGODB_URI);
 
+    cachedConnection = conn;
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
     console.log(`📦 Database: ${conn.connection.name}`);
     
